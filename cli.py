@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PALACIO — cuatro años al mando (versión de consola)
+PRESIDENTEX — cuatro años al mando de Haití (versión de consola)
 Usa el mismo motor (game_engine.py) que la app web, así que el contenido y
 las reglas de los finales son exactamente las mismas en los dos lugares.
 """
@@ -31,14 +31,19 @@ def ask_choice(n_options):
 
 def play():
     print("=" * 78)
-    print("PALACIO — cuatro años al mando")
+    print("PRESIDENTEX — cuatro años al mando de Haití")
     print("=" * 78)
     print(wrap(
-        "Asumís la presidencia de un país en crisis permanente. Vas a tomar 24 "
-        "decisiones, seis por cada año de mandato. Cada una mueve tus cinco "
-        "indicadores, y varias reaparecen, transformadas, en los años siguientes."
+        "Asumís la presidencia de Haití, un país en crisis permanente. Vas a "
+        "tomar 24 decisiones desde el Palacio Nacional en Puerto Príncipe, seis "
+        "por cada año de mandato. Cada una mueve tus cinco indicadores, y varias "
+        "reaparecen, transformadas, en los años siguientes."
     ))
-    input("\n(Enter para asumir el mandato) ")
+    nombre = input("\nNombre: ").strip()
+    apellido = input("Apellido: ").strip()
+    nombre_completo = f"{nombre} {apellido}".strip() or "Presidente/a"
+    print(f"\nBienvenido/a, presidente/a {nombre_completo}.")
+    input("(Enter para asumir el mandato) ")
 
     choices = []
     current_year_shown = 0
@@ -69,7 +74,7 @@ def play():
     print("\n" + "=" * 78)
     print("FIN DEL MANDATO" if ending_type == "good" else "FIN ABRUPTO DEL MANDATO")
     print("=" * 78)
-    print(f"\n{title}\n")
+    print(f"\n{nombre_completo}: {title}\n")
     for p in body:
         print(wrap(p))
         print()

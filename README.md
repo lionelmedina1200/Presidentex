@@ -1,4 +1,4 @@
-# Palacio — cuatro años al mando (versión Flask)
+# Presidentex — cuatro años al mando de Haití (versión Flask)
 
 Simulación política de decisiones, **hecha enteramente en Python** con
 [Flask](https://flask.palletsprojects.com/). No hay JavaScript de juego: cada
@@ -22,7 +22,7 @@ persona real en particular.
 
 ```
 palacio-web/
-├── app.py             → la app Flask: rutas, sesión, arma cada pantalla
+├── index.py             → la app Flask: rutas, sesión, arma cada pantalla
 ├── game_engine.py      → todo el contenido (24 decisiones) y las reglas de finales
 ├── cli.py               → la misma simulación jugable por terminal
 ├── requirements.txt
@@ -51,7 +51,7 @@ por eso funciona bien en un entorno serverless como Vercel.
 cd palacio-web
 python3 -m venv .venv && source .venv/bin/activate   # opcional pero recomendado
 pip install -r requirements.txt
-python app.py
+python index.py
 # abrir http://127.0.0.1:5000
 ```
 
@@ -68,7 +68,7 @@ finales son exactamente los mismos en ambas.
 
 Hoy Vercel detecta Flask automáticamente y lo despliega **sin ningún
 archivo de configuración** (no hace falta `vercel.json`): solo necesita
-encontrar una instancia Flask llamada `app` en `app.py` en la raíz del
+encontrar una instancia Flask llamada `app` en `index.py` en la raíz del
 proyecto, y un `requirements.txt` con las dependencias. Esta carpeta ya
 está armada así.
 
@@ -93,7 +93,7 @@ https://vercel.com/new sin pasar por Git, aunque la opción con Git es más
 cómoda para seguir iterando después.
 
 ### Una recomendación de seguridad (opcional)
-`app.py` usa una `SECRET_KEY` por defecto para poder correr sin configurar
+`index.py` usa una `SECRET_KEY` por defecto para poder correr sin configurar
 nada. Como el juego no maneja datos sensibles, no es obligatorio cambiarla,
 pero si querés hacerlo bien: en el dashboard de Vercel, andá a **Settings →
 Environment Variables** del proyecto y agregá `SECRET_KEY` con cualquier
@@ -135,5 +135,5 @@ económico, conflicto armado, caída popular, reelección, transición
 ordenada). Ajustar esos números es la forma más rápida de hacer el juego
 más fácil o más despiadado.
 
-No hace falta tocar `app.py`, `cli.py` ni las plantillas para agregar o
+No hace falta tocar `index.py`, `cli.py` ni las plantillas para agregar o
 cambiar decisiones — todo el contenido está aislado en `game_engine.py`.

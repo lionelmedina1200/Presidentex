@@ -10,7 +10,7 @@ pensada para jugar en terminal o para testear la lógica de balance del juego.
 PALACIO — cuatro años al mando
 Motor del juego: todo el contenido (24 decisiones, 4 años) y las reglas de
 finales. No depende de Flask ni de nada web: lo importan tanto la app web
-(app.py) como la versión de consola (cli.py).
+(index.py) como la versión de consola (cli.py).
 """
 
 class StatMeta:
@@ -68,7 +68,7 @@ def year1_decisions():
     def d1(s):
         return {
             "tag": "Gabinete", "title": "El primer nombramiento",
-            "text": ["Juraste el cargo hace apenas una semana. Tu primera decisión de peso: a quién nombrás Primer Ministro."],
+            "text": ["Juraste como presidente de Haití hace apenas una semana, en el Palacio Nacional de Puerto Príncipe. Tu primera decisión de peso: a quién nombrás Primer Ministro."],
             "options": [
                 {"label": "Un técnico sin partido", "effects": {"est": 8, "eco": 4, "pop": -3}, "flags": {"pm": "tecnocrata"}},
                 {"label": "Un dirigente de tu propio espacio político", "effects": {"pop": 5, "est": -5}, "flags": {"pm": "aliado"}},
@@ -78,8 +78,8 @@ def year1_decisions():
 
     def d2(s):
         return {
-            "tag": "Seguridad", "title": "Las pandillas de la capital",
-            "text": ["Grupos armados controlan barrios enteros y bloquean la ruta al puerto."],
+            "tag": "Seguridad", "title": "Las pandillas de Puerto Príncipe",
+            "text": ["Grupos armados controlan barrios enteros de la capital haitiana y bloquean la ruta hacia el puerto principal del país."],
             "options": [
                 {"label": "Negociar una tregua", "effects": {"seg": 9, "pop": -4, "est": -6}, "flags": {"gang": "trato"}},
                 {"label": "Operativo policial de gran escala", "effects": {"pop": 6, "eco": -4, "seg": -3}, "flags": {"gang": "operativo"}},
@@ -90,7 +90,7 @@ def year1_decisions():
     def d3(s):
         return {
             "tag": "Economía", "title": "El subsidio a los combustibles",
-            "text": ["El fondo que sostiene el precio del combustible está por agotarse."],
+            "text": ["El fondo que sostiene el precio del combustible en Haití está por agotarse."],
             "options": [
                 {"label": "Eliminar el subsidio de una vez", "effects": {"eco": 11, "pop": -14}, "flags": {"fuel": "shock"}},
                 {"label": "Mantener el subsidio como está", "effects": {"eco": -10, "pop": 6}, "flags": {"fuel": "mantenido"}},
@@ -101,7 +101,7 @@ def year1_decisions():
     def d4(s):
         return {
             "tag": "Relaciones internacionales", "title": "La oferta de Naciones Unidas",
-            "text": ["Una misión de la ONU ofrece tropas de estabilización y financiamiento atado a reformas."],
+            "text": ["Una misión de la ONU ofrece desplegar tropas de estabilización en Haití, con financiamiento atado a reformas."],
             "options": [
                 {"label": "Aceptar tropas de estabilización", "effects": {"seg": 9, "rel": 7, "pop": -8}, "flags": {"un": "tropas"}},
                 {"label": "Aceptar solo ayuda económica", "effects": {"eco": 8, "rel": 3}, "flags": {"un": "solo_ayuda"}},
@@ -123,7 +123,7 @@ def year1_decisions():
     def d6(s):
         return {
             "tag": "Emergencia", "title": "El huracán",
-            "text": ["Un huracán golpea el sur del país. Hay pueblos incomunicados."],
+            "text": ["Un huracán golpea el sur de Haití. Hay pueblos incomunicados."],
             "options": [
                 {"label": "Movilizar todos los recursos del Estado", "effects": {"pop": 10, "eco": -9, "seg": 2}, "flags": {"huracan": "propio"}},
                 {"label": "Pedir ayuda internacional de inmediato", "effects": {"rel": 6, "pop": 4, "eco": 2}, "flags": {"huracan": "ayuda"}},
@@ -236,7 +236,7 @@ def year2_decisions():
     def d6(s):
         return {
             "tag": "Emergencia", "title": "Hambre en el valle agrícola",
-            "text": ["Una sequía prolongada golpea la principal región agrícola del país."],
+            "text": ["Una sequía prolongada golpea el valle del Artibonite, la principal región agrícola de Haití."],
             "options": [
                 {"label": "Declarar emergencia y pedir ayuda internacional", "effects": {"rel": 4, "pop": 6, "eco": -2}, "flags": {"hambruna": "ayuda_externa"}},
                 {"label": "Usar reservas estratégicas del Estado", "effects": {"eco": -9, "pop": 8, "est": 2}, "flags": {"hambruna": "reservas"}},
@@ -294,7 +294,7 @@ def year3_decisions():
     def d3(s):
         return {
             "tag": "Relaciones internacionales", "title": "Tensión en la frontera",
-            "text": ["El país vecino endurece controles migratorios; hay deportaciones masivas."],
+            "text": ["República Dominicana endurece los controles migratorios en la frontera con Haití; hay reportes de deportaciones masivas."],
             "options": [
                 {"label": "Postura firme en defensa de los migrantes", "effects": {"pop": 8, "rel": -8}, "flags": {"frontera": "firme"}},
                 {"label": "Buscar un acuerdo migratorio conciliador", "effects": {"rel": 8, "pop": -6}, "flags": {"frontera": "conciliador"}},
@@ -347,7 +347,7 @@ def year4_decisions():
     def d1(s):
         return {
             "tag": "Institucional", "title": "Preparar las elecciones",
-            "text": ["Se acerca el fin de tu mandato. Todo el país mira hacia la próxima elección."],
+            "text": ["Se acerca el fin de tu mandato. Todo Haití mira hacia la próxima elección presidencial."],
             "options": [
                 {"label": "Comprometerte con elecciones libres y observadas", "effects": {"est": 10, "pop": 4}, "flags": {"elecciones_final": "libres"}},
                 {"label": "Impulsar una reforma para reelegirte", "effects": {"pop": -8, "est": -14}, "flags": {"elecciones_final": "reeleccion"}},
@@ -371,8 +371,8 @@ def year4_decisions():
         if worst == "seg":
             seg_ok = s["stats"]["seg"] >= 45
             return {
-                "tag": "Crisis", "title": "Ofensiva armada en la capital",
-                "text": ["Grupos armados lanzan una ofensiva coordinada sobre Puerto Príncipe."],
+                "tag": "Crisis", "title": "Ofensiva armada en Puerto Príncipe",
+                "text": ["Grupos armados lanzan una ofensiva coordinada sobre varios puntos de la capital haitiana."],
                 "options": [
                     {"label": "Responder con todo el peso del Estado",
                      "effects": {"seg": 14, "pop": 8} if seg_ok else {"seg": -18, "est": -12, "pop": -10},
@@ -383,8 +383,8 @@ def year4_decisions():
             }
         if worst == "eco":
             return {
-                "tag": "Crisis", "title": "Colapso de la moneda",
-                "text": ["La moneda nacional se desploma en cuestión de días."],
+                "tag": "Crisis", "title": "Colapso del gourde",
+                "text": ["El gourde, la moneda nacional, se desploma en cuestión de días."],
                 "options": [
                     {"label": "Ajuste de shock: recorte drástico de gasto", "effects": {"eco": 12, "pop": -14}, "flags": {"crisis_final": "ajuste_shock"}},
                     {"label": "Rescate financiero de emergencia", "effects": {"eco": 10, "rel": 3, "pop": -6, "est": -2}, "flags": {"crisis_final": "rescate"}},
@@ -473,19 +473,19 @@ def compute_ending(state):
     if est <= 22 or (pop <= 22 and est <= 38):
         return ("bad", "El avión a las cinco de la mañana", [
             "Los últimos días de tu mandato no se parecen en nada a lo que imaginaste al asumir.",
-            "A las cinco de la mañana, un vuelo no anunciado te saca del país con una valija y sin despedida pública.",
+            "A las cinco de la mañana, un vuelo no anunciado te saca de Haití con una valija y sin despedida pública.",
         ])
 
     if seg <= 24 and rel <= 34:
-        return ("bad", "El país en armas", [
-            "La violencia armada desbordó al Estado, justo cuando el aislamiento internacional te dejó sin apoyos externos.",
-            "Lo que empezó como una crisis de seguridad urbana termina descrito como un conflicto armado interno.",
+        return ("bad", "Haití en armas", [
+            "La violencia armada desbordó al Estado haitiano, justo cuando el aislamiento internacional te dejó sin apoyos externos.",
+            "Lo que empezó como una crisis de seguridad urbana en Puerto Príncipe termina descrito, en los reportes internacionales, como un conflicto armado interno.",
         ])
 
     if eco <= 16:
         return ("bad", "Ruinas con nombre y apellido", [
-            "La moneda perdió casi todo su valor. Una parte importante de la población depende de ayuda humanitaria para comer.",
-            "Terminás el mandato con un país en ruinas económicas: sin reservas, sin crédito y sin margen para el que venga después.",
+            "El gourde perdió casi todo su valor. Una parte importante de la población haitiana depende de ayuda humanitaria para comer.",
+            "Terminás el mandato con Haití en ruinas económicas: sin reservas, sin crédito y sin margen para el que venga después.",
         ])
 
     if pop <= 26:
@@ -508,7 +508,7 @@ def compute_ending(state):
         ])
 
     return ("bad", "Cuatro años, ningún rumbo claro", [
-        "Ni el desastre absoluto ni la gestión ejemplar: el país sigue de pie, pero más golpeado y desconfiado.",
+        "Ni el desastre absoluto ni la gestión ejemplar: Haití sigue de pie, pero más golpeado y desconfiado.",
         "El país que recibe tu sucesor tiene, en casi todos los frentes, más problemas que soluciones heredadas.",
     ])
 
