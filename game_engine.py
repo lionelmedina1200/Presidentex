@@ -1,13 +1,5 @@
-#!/usr/bin/env python3
 """
-PALACIO — cuatro años al mando
-Versión de consola (Python) de la simulación política.
-Mismo motor de decisiones y finales que la versión web (index.html + game.js);
-pensada para jugar en terminal o para testear la lógica de balance del juego.
-"""
-
-"""
-PALACIO — cuatro años al mando
+PRESIDENTEX — cuatro años al mando de Haití
 Motor del juego: todo el contenido (24 decisiones, 4 años) y las reglas de
 finales. No depende de Flask ni de nada web: lo importan tanto la app web
 (index.py) como la versión de consola (cli.py).
@@ -561,3 +553,49 @@ def replay(choices):
             })
             idx += 1
     return {"state": state, "log": log, "year": 4, "day": 6, "done": True}
+
+
+def year_recap(choices, year):
+    """Arma el resumen de un año ya completado (1 a 4): las estadísticas al
+    empezar y al terminar ese año, las 6 decisiones que se tomaron, y una
+    frase corta que destaca qué fue lo que más se movió."""
+    end_idx = year * 6
+    start_idx = end_idx - 6
+    before = replay(choices[:start_idx])["state"]["stats"]
+    result_end = replay(choices[:end_idx])
+    after = result_end["state"]["stats"]
+
+    deltas = {k: after[k] - before[k] for k in before}
+    label_of = {m.key: m.label for m in STATS_META}
+
+    best_key = max(deltas, key=lambda k: deltas[k])
+    worst_key = min(deltas, key=lambda k: deltas[k])
+
+    frases = []
+    if deltas[best_key] > 0:
+        frases.append(f"{label_of[best_key]} fue lo que más mejoró este año ({deltas[best_key]:+d}).")
+    if deltas[worst_key] < 0 and worst_key != best_key:
+        frases.append(f"{label_of[worst_key]} fue lo que más se resintió ({deltas[worst_key]:+d}).")
+    if not frases:
+        frases.append("Un año sin grandes sobresaltos: los indicadores casi no se movieron.")
+    resumen = " ".join(frases)
+
+    decisiones_del_año = [l for l in result_end["log"] if l["year"] == year]
+
+    stats_rows = []
+    for m in STATS_META:
+        stats_rows.append({
+            "key": m.key,
+            "label": m.label,
+            "before": before[m.key],
+            "after": after[m.key],
+            "delta": deltas[m.key],
+        })
+
+    return {
+        "year": year,
+        "year_title": YEAR_TITLES[year - 1],
+        "resumen": resumen,
+        "decisiones": decisiones_del_año,
+        "stats_rows": stats_rows,
+    }

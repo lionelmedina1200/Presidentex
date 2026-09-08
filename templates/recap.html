@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="stage">
+  <div class="plain-card">
+    <div class="kicker">Balance del año {{ recap.year }}</div>
+    <h2>{{ recap.year_title }}</h2>
+    <p>{{ recap.resumen }}</p>
+
+    <div class="recap-stats">
+      {% for row in recap.stats_rows %}
+      <div class="rs">
+        <div class="rs-label">{{ row.label }}</div>
+        <div class="rs-values">
+          <span class="rs-before">{{ row.before }}</span>
+          <span class="rs-arrow">→</span>
+          <span class="rs-after" style="color:{{ '#3f6b3f' if row.after >= 60 else ('#8a7238' if row.after >= 35 else '#8a352f') }}">{{ row.after }}</span>
+        </div>
+        <div class="rs-delta {{ 'up' if row.delta > 0 else ('down' if row.delta < 0 else 'zero') }}">{{ '%+d'|format(row.delta) if row.delta != 0 else '—' }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="recap-log">
+      <div class="recap-log-title">Lo que decidiste este año</div>
+      <ol>
+        {% for d in recap.decisiones %}
+        <li><strong>{{ d.title }}:</strong> {{ d.choice }}</li>
+        {% endfor %}
+      </ol>
+    </div>
+
+    <div class="cta-row">
+      <form method="post" action="{{ url_for('continuar') }}">
+        <button class="btn" type="submit">
+          {% if es_ultimo_anio %}Ver cómo termina tu mandato{% else %}Empezar el año {{ recap.year + 1 }}{% endif %}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

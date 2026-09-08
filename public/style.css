@@ -217,6 +217,48 @@ button.btn.ghost{background:transparent; color:var(--ink); border:1px solid rgba
 .ending-stats .es .v{font-family:var(--font-mono); font-size:1.05rem; font-weight:600;}
 .ending-stats .es .l{font-size:.6rem; color:var(--ink-soft); margin-top:3px; line-height:1.2;}
 
+/* ---------- Balance de año ---------- */
+.recap-stats{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+  margin:20px 0 6px;
+}
+.rs{
+  background:rgba(34,28,18,.05);
+  border-radius:2px;
+  padding:9px 6px;
+  text-align:center;
+}
+.rs-label{font-size:.6rem; color:var(--ink-soft); line-height:1.25; min-height:2.2em;}
+.rs-values{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  gap:4px;
+  margin-top:6px;
+  font-family:var(--font-mono);
+}
+.rs-before{font-size:.8rem; color:var(--ink-soft);}
+.rs-arrow{font-size:.7rem; color:var(--ink-soft);}
+.rs-after{font-size:1rem; font-weight:600;}
+.rs-delta{font-family:var(--font-mono); font-size:.66rem; margin-top:3px;}
+.rs-delta.up{color:#3f6b3f;}
+.rs-delta.down{color:#8a352f;}
+.rs-delta.zero{color:var(--ink-soft);}
+
+@media (max-width:620px){
+  .recap-stats{gap:5px;}
+  .rs{padding:6px 4px;}
+  .rs-label{font-size:.52rem;}
+  .rs-after{font-size:.85rem;}
+}
+
+.recap-log{margin-top:22px;}
+.recap-log-title{font-family:var(--font-mono); font-size:.72rem; color:var(--ink-soft); margin-bottom:8px;}
+.recap-log ol{padding-left:18px; margin:0;}
+.recap-log li{font-size:.88rem; line-height:1.55; margin-bottom:6px; color:var(--ink);}
+
 details.history{margin-top:20px;}
 details.history summary{cursor:pointer; font-size:.85rem; color:var(--ink-soft);}
 .history ol{padding-left:18px; margin:12px 0 0;}

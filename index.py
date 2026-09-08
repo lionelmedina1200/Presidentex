@@ -1,20 +1,26 @@
 """
-PRESIDENTEX — cuatro años al mando
+PRESIDENTEX — cuatro años al mando de Haití
 App web en Flask. Todo el juego corre en Python: esta app arma el estado,
 decide qué mostrar y procesa cada elección del jugador. El HTML es solo
 la plantilla de salida (Jinja), sin JavaScript de juego.
 
 Cómo se guarda el progreso: en vez de una base de datos, la sesión de Flask
-(una cookie firmada) guarda el nombre del jugador y la lista de índices
-elegidos hasta el momento, por ejemplo [0, 2, 1, ...]. Cada vez que hace
-falta saber el estado actual (estadísticas, banderas, qué decisión toca),
-se reconstruye desde cero con game_engine.replay(choices). Así no hace
-falta ningún almacenamiento en el servidor, lo cual encaja perfecto con un
-despliegue serverless como Vercel.
+(una cookie firmada) guarda el nombre del jugador, la lista de índices
+elegidos hasta el momento (ej. [0, 2, 1, ...]) y cuántas decisiones ya
+tienen su "balance de año" mostrado. Cada vez que hace falta saber el
+estado actual (estadísticas, banderas, qué pantalla toca), se reconstruye
+desde cero con game_engine.replay(choices). Así no hace falta ningún
+almacenamiento en el servidor, lo cual encaja perfecto con un despliegue
+serverless como Vercel.
 
-Nota de velocidad: cada elección se resuelve en una sola respuesta (la
-propia pantalla siguiente), sin pasar por un redirect intermedio. Eso evita
-un viaje de ida y vuelta al servidor por cada clic.
+Flujo de pantallas: intro (con nombre) → decisión 1..6 → BALANCE DEL AÑO 1
+→ decisión 7..12 → BALANCE DEL AÑO 2 → ... → decisión 19..24 →
+BALANCE DEL AÑO 4 → final. El balance de cada año se intercala apenas se
+completa la sexta decisión de ese año, antes de arrancar el año siguiente
+(o antes del final, en el caso del año 4).
+
+Nota de velocidad: cada clic se resuelve en una sola respuesta (la propia
+pantalla siguiente), sin pasar por un redirect intermedio.
 """
 
 import os
@@ -39,6 +45,13 @@ def get_choices():
 
 def get_nombre():
     return session.get("nombre", "")
+
+
+def get_recap_seen():
+    """Cuántas decisiones (0, 6, 12, 18 o 24) ya tuvieron su balance de año
+    mostrado. Mientras esto sea menor a la cantidad de elecciones hechas en
+    un múltiplo de 6, corresponde mostrar el balance antes de seguir."""
+    return session.get("recap_seen", 0)
 
 
 @app.route("/style.css")
@@ -80,6 +93,34 @@ def render_final_page(result):
     )
 
 
+def render_recap_page(choices, n):
+    recap = ge.year_recap(choices, year=n // 6)
+    es_ultimo_anio = n == ge.TOTAL_DECISIONS
+    return render_template(
+        "recap.html",
+        recap=recap,
+        es_ultimo_anio=es_ultimo_anio,
+        nombre=get_nombre(),
+    )
+
+
+def render_current():
+    """Punto único de decisión: mirando cuántas elecciones hay guardadas y
+    cuántas ya tuvieron su balance de año mostrado, decide si corresponde
+    mostrar la próxima decisión, el balance del año que se acaba de cerrar,
+    o la pantalla final."""
+    choices = get_choices()
+    n = len(choices)
+
+    if n > 0 and n % 6 == 0 and get_recap_seen() < n:
+        return render_recap_page(choices, n)
+
+    result = ge.replay(choices)
+    if result["done"]:
+        return render_final_page(result)
+    return render_decision_page(result)
+
+
 @app.route("/")
 def index():
     en_curso = len(get_choices())
@@ -93,27 +134,23 @@ def empezar():
     nombre_completo = f"{nombre} {apellido}".strip()
     session["nombre"] = nombre_completo if nombre_completo else "Presidente/a"
     session["choices"] = []
-    result = ge.replay([])
-    return render_decision_page(result)
+    session["recap_seen"] = 0
+    return render_current()
 
 
 @app.route("/juego")
 def juego():
-    choices = get_choices()
     if not get_nombre():
         return redirect(url_for("index"))
-    result = ge.replay(choices)
-    if result["done"]:
-        return render_final_page(result)
-    return render_decision_page(result)
+    return render_current()
 
 
 @app.route("/elegir", methods=["POST"])
 def elegir():
-    choices = get_choices()
     if not get_nombre():
         return redirect(url_for("index"))
 
+    choices = get_choices()
     result = ge.replay(choices)
     if result["done"]:
         return render_final_page(result)
@@ -131,26 +168,32 @@ def elegir():
 
     choices.append(idx)
     session["choices"] = choices
+    return render_current()
 
-    result2 = ge.replay(choices)
-    if result2["done"]:
-        return render_final_page(result2)
-    return render_decision_page(result2)
+
+@app.route("/continuar", methods=["POST"])
+def continuar():
+    """El jugador ya leyó el balance del año: lo marcamos como visto y
+    avanzamos a la siguiente pantalla (el año que sigue, o el final)."""
+    if not get_nombre():
+        return redirect(url_for("index"))
+    n = len(get_choices())
+    session["recap_seen"] = n
+    return render_current()
 
 
 @app.route("/final")
 def final():
-    choices = get_choices()
-    result = ge.replay(choices)
-    if not result["done"]:
-        return render_decision_page(result) if get_nombre() else redirect(url_for("index"))
-    return render_final_page(result)
+    if not get_nombre():
+        return redirect(url_for("index"))
+    return render_current()
 
 
 @app.route("/reiniciar", methods=["POST"])
 def reiniciar():
     session.pop("choices", None)
     session.pop("nombre", None)
+    session.pop("recap_seen", None)
     return redirect(url_for("index"))
 
 
